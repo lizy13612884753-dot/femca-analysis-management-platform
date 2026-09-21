@@ -1,0 +1,370 @@
+/* 全局CSS变量 */
+:root {
+  --primary-color: #409EFF;
+  --success-color: #67C23A;
+  --warning-color: #E6A23C;
+  --danger-color: #F56C6C;
+  --info-color: #909399;
+  
+  --text-primary: #303133;
+  --text-regular: #606266;
+  --text-secondary: #909399;
+  --text-placeholder: #C0C4CC;
+  
+  --border-base: #DCDFE6;
+  --border-light: #E4E7ED;
+  --border-lighter: #EBEEF5;
+  --border-extra-light: #F2F6FC;
+  
+  --background-base: #F5F7FA;
+  --background-light: #FAFCFF;
+  
+  --font-size-base: 14px;
+  --font-size-small: 12px;
+  --font-size-large: 16px;
+  
+  --border-radius-base: 4px;
+  --border-radius-small: 2px;
+  --border-radius-large: 8px;
+}
+
+html.dark {
+  --primary-color: #409EFF;
+  --success-color: #67C23A;
+  --warning-color: #E6A23C;
+  --danger-color: #F56C6C;
+  --info-color: #909399;
+  
+  --text-primary: #E5EAF3;
+  --text-regular: #CFD3DC;
+  --text-secondary: #A3A6AD;
+  --text-placeholder: #8D9096;
+  
+  --border-base: #4C4D4F;
+  --border-light: #414243;
+  --border-lighter: #363637;
+  --border-extra-light: #2B2B2C;
+  
+  --background-base: #0F1115;
+  --background-light: #1A1C23;
+}
+
+/* 深色主题样式 */
+html.dark,
+body.dark {
+  background-color: var(--background-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark body,
+body.dark {
+  background-color: var(--background-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark #app,
+body.dark #app {
+  background-color: var(--background-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .layout-container,
+body.dark .layout-container {
+  background-color: var(--background-base) !important;
+}
+
+html.dark .layout-content,
+body.dark .layout-content {
+  background-color: var(--background-base) !important;
+}
+
+html.dark .settings-container,
+body.dark .settings-container {
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-card,
+body.dark .el-card {
+  background-color: var(--background-light) !important;
+  border-color: var(--border-base) !important;
+}
+
+html.dark .el-card__header,
+body.dark .el-card__header {
+  background-color: var(--background-base) !important;
+  border-bottom-color: var(--border-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .el-tabs--border-card,
+body.dark .el-tabs--border-card {
+  background-color: var(--background-light) !important;
+  border-color: var(--border-base) !important;
+}
+
+html.dark .el-tabs--border-card > .el-tabs__header,
+body.dark .el-tabs--border-card > .el-tabs__header {
+  background-color: var(--background-base) !important;
+  border-bottom-color: var(--border-base) !important;
+}
+
+html.dark .el-tabs__item,
+body.dark .el-tabs__item {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-tabs__item:hover,
+body.dark .el-tabs__item:hover {
+  color: var(--primary-color) !important;
+}
+
+html.dark .el-tabs__item.is-active,
+body.dark .el-tabs__item.is-active {
+  color: var(--primary-color) !important;
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-form-item__label,
+body.dark .el-form-item__label {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-input__inner,
+body.dark .el-input__inner {
+  background-color: var(--background-base) !important;
+  border-color: var(--border-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .el-input__inner::placeholder,
+body.dark .el-input__inner::placeholder {
+  color: var(--text-placeholder) !important;
+}
+
+html.dark .el-select-dropdown,
+body.dark .el-select-dropdown {
+  background-color: var(--background-light) !important;
+  border-color: var(--border-base) !important;
+}
+
+html.dark .el-select-dropdown__item,
+body.dark .el-select-dropdown__item {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-select-dropdown__item:hover,
+body.dark .el-select-dropdown__item:hover {
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-select-dropdown__item.is-selected,
+body.dark .el-select-dropdown__item.is-selected {
+  color: var(--primary-color) !important;
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-radio__label,
+body.dark .el-radio__label {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-radio__input.is-checked .el-radio__inner,
+body.dark .el-radio__input.is-checked .el-radio__inner {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+html.dark .el-button--primary,
+body.dark .el-button--primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+html.dark .el-button--default,
+body.dark .el-button--default {
+  background-color: var(--background-base) !important;
+  border-color: var(--border-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .el-button--default:hover,
+body.dark .el-button--default:hover {
+  background-color: var(--border-light) !important;
+}
+
+html.dark .el-descriptions,
+body.dark .el-descriptions {
+  background-color: var(--background-light) !important;
+}
+
+html.dark .el-descriptions__label,
+body.dark .el-descriptions__label {
+  background-color: var(--background-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .el-descriptions__content,
+body.dark .el-descriptions__content {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-table,
+body.dark .el-table {
+  background-color: var(--background-light) !important;
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-table th,
+body.dark .el-table th {
+  background-color: var(--background-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .el-table tr,
+body.dark .el-table tr {
+  background-color: var(--background-light) !important;
+}
+
+html.dark .el-table--striped .el-table__body tr.el-table__row--striped,
+body.dark .el-table--striped .el-table__body tr.el-table__row--striped {
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-table--enable-row-hover .el-table__body tr:hover > td,
+body.dark .el-table--enable-row-hover .el-table__body tr:hover > td {
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-table td,
+body.dark .el-table td {
+  border-color: var(--border-light) !important;
+}
+
+html.dark .el-table th.is-leaf,
+body.dark .el-table th.is-leaf {
+  border-color: var(--border-light) !important;
+}
+
+html.dark .el-pagination,
+body.dark .el-pagination {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-pagination button,
+body.dark .el-pagination button {
+  background-color: var(--background-light) !important;
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-pagination button:hover,
+body.dark .el-pagination button:hover {
+  color: var(--primary-color) !important;
+}
+
+html.dark .el-pagination .el-pager li,
+body.dark .el-pagination .el-pager li {
+  background-color: var(--background-light) !important;
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-pagination .el-pager li:hover,
+body.dark .el-pagination .el-pager li:hover {
+  color: var(--primary-color) !important;
+}
+
+html.dark .el-pagination .el-pager li.is-active,
+body.dark .el-pagination .el-pager li.is-active {
+  color: var(--primary-color) !important;
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-dialog,
+body.dark .el-dialog {
+  background-color: var(--background-light) !important;
+}
+
+html.dark .el-dialog__header,
+body.dark .el-dialog__header {
+  background-color: var(--background-base) !important;
+  border-bottom-color: var(--border-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .el-dialog__body,
+body.dark .el-dialog__body {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-message,
+body.dark .el-message {
+  background-color: var(--background-light) !important;
+  border-color: var(--border-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .el-message--success,
+body.dark .el-message--success {
+  background-color: var(--success-color) !important;
+  color: #fff !important;
+}
+
+html.dark .el-message--error,
+body.dark .el-message--error {
+  background-color: var(--danger-color) !important;
+  color: #fff !important;
+}
+
+html.dark .el-message--warning,
+body.dark .el-message--warning {
+  background-color: var(--warning-color) !important;
+  color: #fff !important;
+}
+
+html.dark .el-dropdown-menu,
+body.dark .el-dropdown-menu {
+  background-color: var(--background-light) !important;
+  border-color: var(--border-base) !important;
+}
+
+html.dark .el-dropdown-menu__item,
+body.dark .el-dropdown-menu__item {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-dropdown-menu__item:hover,
+body.dark .el-dropdown-menu__item:hover {
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-menu,
+body.dark .el-menu {
+  background-color: var(--background-light) !important;
+  border-color: var(--border-base) !important;
+}
+
+html.dark .el-menu-item,
+body.dark .el-menu-item {
+  color: var(--text-regular) !important;
+}
+
+html.dark .el-menu-item:hover,
+body.dark .el-menu-item:hover {
+  background-color: var(--background-base) !important;
+  color: var(--primary-color) !important;
+}
+
+html.dark .el-menu-item.is-active,
+body.dark .el-menu-item.is-active {
+  color: var(--primary-color) !important;
+  background-color: var(--background-base) !important;
+}
+
+html.dark .el-menu--horizontal .el-menu-item,
+body.dark .el-menu--horizontal .el-menu-item {
+  border-bottom-color: var(--border-base) !important;
+}
+
+html.dark .el-menu--horizontal > .el-menu-item.is-active,
+body.dark .el-menu--horizontal > .el-menu-item.is-active {
+  border-bottom-color: var(--primary-color) !important;
+}
