@@ -1,19 +1,8 @@
-import requests
-
-from config import base_url
+from api_client import get_equipment
 
 
 def test_equipment(access_token):
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
-    equipment_url = f"{base_url}/api/equipment/instances/"
-
-    equipment_response = requests.get(
-        equipment_url,
-        headers=headers
-    )
+    equipment_response = get_equipment(access_token)
 
     equipment_data = equipment_response.json()
 

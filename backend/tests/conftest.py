@@ -1,10 +1,7 @@
 import os
-import requests
 import pytest
+from api_client import login
 
-from config import base_url
-
-login_url = f"{base_url}/api/auth/login/"
 
 login_data = {
     "username": os.getenv("FEMCA_USERNAME"),
@@ -13,9 +10,9 @@ login_data = {
 
 @pytest.fixture(scope="session")
 def access_token():
-    login_response = requests.post(
-        login_url,
-        json=login_data
+    login_response = login(
+        login_data["username"],
+        login_data["password"]
     )
 
     assert login_response.status_code == 200

@@ -1,10 +1,6 @@
-import requests
 import pytest
-from config import base_url
 from login_test_data import login_test_data
-
-login_url = f"{base_url}/api/auth/login/"
-
+from api_client import login
 
 @pytest.mark.parametrize(
     "username,password,expected_status,expected_message",
@@ -16,15 +12,7 @@ def test_login(
     expected_status,
     expected_message
 ):
-    login_data = {
-        "username": username,
-        "password": password
-    }
-
-    response = requests.post(
-        login_url,
-        json=login_data
-    )
+    response = login(username, password)
 
     assert response.status_code == expected_status
 
