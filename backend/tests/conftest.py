@@ -2,7 +2,7 @@ import os
 import requests
 import pytest
 
-base_url = "http://127.0.0.1:8000"
+from config import base_url
 
 login_url = f"{base_url}/api/auth/login/"
 
@@ -11,10 +11,8 @@ login_data = {
     "password": os.getenv("FEMCA_PASSWORD")
 }
 
-
 @pytest.fixture(scope="session")
 def access_token():
-
     login_response = requests.post(
         login_url,
         json=login_data

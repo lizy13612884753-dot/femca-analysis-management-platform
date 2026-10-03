@@ -1,10 +1,9 @@
 import requests
 
-base_url = "http://127.0.0.1:8000"
+from config import base_url
 
 
 def test_equipment(access_token):
-
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
