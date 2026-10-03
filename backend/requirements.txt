@@ -6,3 +6,4 @@ django-filter==23.5
 PyMySQL==1.1.0
 pytest==9.1.1
 requests==2.34.2
+setuptools<81
