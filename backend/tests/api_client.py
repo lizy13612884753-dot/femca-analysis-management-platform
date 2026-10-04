@@ -17,12 +17,13 @@ def login(username, password):
 
     return response
     
-def get_equipment(access_token):
+def get_equipment(access_token=None):
     equipment_url = f"{base_url}/api/equipment/instances/"
 
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
+    headers = {}
+
+    if access_token is not None:
+        headers["Authorization"] = f"Bearer {access_token}"
 
     response = requests.get(
         equipment_url,
