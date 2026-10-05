@@ -31,3 +31,48 @@ def get_equipment(access_token=None):
     )
 
     return response
+
+def get_equipment_types(access_token):
+    equipment_url = f"{base_url}/api/equipment/types/"
+
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = requests.get(
+        equipment_url,
+        headers=headers
+    )
+
+    return response
+
+def create_equipment(access_token, equipment_data):
+    url = f"{base_url}/api/equipment/instances/"
+
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = requests.post(
+        url,
+        headers=headers,
+        json=equipment_data
+    )
+
+    return response
+    
+
+def delete_equipment(access_token, equipment_id):
+    url = f"{base_url}/api/equipment/instances/{equipment_id}/"
+
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = requests.delete(
+        url,
+        headers=headers
+    )
+
+    return response
+    
