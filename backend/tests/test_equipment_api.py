@@ -78,10 +78,115 @@ def test_equipment_name_boundary(
     try:
         response = create_equipment(access_token, equipment_data)
 
+        # ① 如果真的创建成功，先保存 ID，保证之后可以 cleanup
         if response.status_code == 201:
             equipment_id = response.json()["id"]
 
+        # ② 再检查最核心的 Status Code
         assert response.status_code == expected_status
+
+        # ③ Status 正确后，再做对应的 Response Body Validation
+        response_data = response.json()
+
+        if response.status_code == 201:
+            assert response_data["name"] == equipment_data["name"]
+            assert response_data["serial_number"] == equipment_data["serial_number"]
+
+        if response.status_code == 400:
+            assert "name" in response_data
+
+    finally:
+        if equipment_id is not None:
+            delete_response = delete_equipment(
+                access_token,
+                equipment_id
+            )
+            assert delete_response.status_code == 204
+
+def test_create_equipment_missing_name(
+    access_token,
+    equipment_type_id
+):
+    equipment_data = {
+        "equipment_type": equipment_type_id,
+        "serial_number": f"TEST-{uuid.uuid4().hex[:8]}"
+    }
+
+    equipment_id = None
+
+    try:
+        response = create_equipment(access_token, equipment_data)
+
+        if response.status_code == 201:
+            equipment_id = response.json()["id"]
+
+        assert response.status_code == 400
+
+        response_data = response.json()
+        assert "name" in response_data
+
+    finally:
+        if equipment_id is not None:
+            delete_response = delete_equipment(
+                access_token,
+                equipment_id
+            )
+            assert delete_response.status_code == 204
+
+
+def test_create_equipment_null_name(
+    access_token,
+    equipment_type_id
+):
+    equipment_data = {
+        "equipment_type": equipment_type_id,
+        "serial_number": f"TEST-{uuid.uuid4().hex[:8]}",
+        "name": None
+    }
+
+    equipment_id = None
+
+    try:
+        response = create_equipment(access_token, equipment_data)
+
+        if response.status_code == 201:
+            equipment_id = response.json()["id"]
+
+        assert response.status_code == 400
+
+        response_data = response.json()
+        assert "name" in response_data
+
+    finally:
+        if equipment_id is not None:
+            delete_response = delete_equipment(
+                access_token,
+                equipment_id
+            )
+            assert delete_response.status_code == 204
+
+        
+def test_create_equipment_invalid_equipment_type(
+    access_token
+):
+    equipment_data = {
+        "equipment_type": 999999,
+        "serial_number": f"TEST-{uuid.uuid4().hex[:8]}",
+        "name": "123"
+    }
+
+    equipment_id = None
+
+    try:
+        response = create_equipment(access_token, equipment_data)
+
+        if response.status_code == 201:
+            equipment_id = response.json()["id"]
+
+        assert response.status_code == 400
+
+        response_data = response.json()
+        assert "equipment_type" in response_data
 
     finally:
         if equipment_id is not None:
