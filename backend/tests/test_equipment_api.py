@@ -195,3 +195,47 @@ def test_create_equipment_invalid_equipment_type(
                 equipment_id
             )
             assert delete_response.status_code == 204
+
+
+def test_create_duplicate_equipment(
+    access_token,
+    equipment_type_id
+):
+    serial_number = f"TEST-{uuid.uuid4().hex[:8]}"
+
+    equipment_data = {
+        "equipment_type": equipment_type_id,
+        "serial_number": serial_number,
+        "name": "Duplicate Test"
+    }
+
+    equipment_id = None
+
+    try:
+        response = create_equipment(
+            access_token,
+            equipment_data
+        )
+
+        if response.status_code == 201:
+            equipment_id = response.json()["id"]
+
+        assert response.status_code == 201
+
+        duplicate_response = create_equipment(
+            access_token,
+            equipment_data
+        )
+
+        duplicate_data = duplicate_response.json()
+
+        assert duplicate_response.status_code == 400
+        assert "non_field_errors" in duplicate_data
+
+    finally:
+        if equipment_id is not None:
+            delete_response = delete_equipment(
+                access_token,
+                equipment_id
+            )
+            assert delete_response.status_code == 204
