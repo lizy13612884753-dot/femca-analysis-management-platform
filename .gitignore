@@ -45,3 +45,11 @@ copy_to_startup.ps1
 create_shortcut.vbs
 create_startup_shortcut.ps1
 create_startup_shortcut.vbs
+
+# Pytest
+.pytest_cache/
+__pycache__/
+
+# Allure generated results
+allure-results/
+allure-report/

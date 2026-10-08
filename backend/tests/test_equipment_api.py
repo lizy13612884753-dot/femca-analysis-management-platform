@@ -4,6 +4,11 @@ import pytest
 
 from api_client import get_equipment, create_equipment, delete_equipment
 
+import allure
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 def test_equipment(access_token):
     equipment_response = get_equipment(access_token)
@@ -11,6 +16,7 @@ def test_equipment(access_token):
     equipment_data = equipment_response.json()
 
     assert equipment_response.status_code == 200
+
     assert "count" in equipment_data
     assert isinstance(equipment_data["count"], int)
     assert "results" in equipment_data
@@ -222,15 +228,26 @@ def test_create_duplicate_equipment(
 
         assert response.status_code == 201
 
-        duplicate_response = create_equipment(
-            access_token,
-            equipment_data
-        )
+        with allure.step("Verify duplicate equipment is rejected"):
+            duplicate_response = create_equipment(
+                access_token,
+                equipment_data
+            )
 
-        duplicate_data = duplicate_response.json()
+            duplicate_data = duplicate_response.json()
+            allure.attach(
+                str(duplicate_data),
+                name="Duplicate Response Body",
+                attachment_type=allure.attachment_type.TEXT
+            )
 
-        assert duplicate_response.status_code == 400
-        assert "non_field_errors" in duplicate_data
+            assert duplicate_response.status_code == 400
+            assert "non_field_errors" in duplicate_data
+
+        if duplicate_response.status_code == 400:
+            logger.info("Duplicate correctly rejected")
+        else:
+            logger.error("Unexpected duplicate response")
 
     finally:
         if equipment_id is not None:

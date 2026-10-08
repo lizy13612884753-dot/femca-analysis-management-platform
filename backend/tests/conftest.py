@@ -1,6 +1,10 @@
 import os
 import pytest
 from api_client import login, get_equipment_types
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 login_data = {
@@ -32,4 +36,16 @@ def equipment_type_id(access_token):
     equipment_type_id = data["results"][0]["id"]
 
     return equipment_type_id
-    
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        logger.error(
+            "Test FAILED: %s\nReason:\n%s",
+            item.nodeid,
+            report.longreprtext
+        )
