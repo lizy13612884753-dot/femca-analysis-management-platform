@@ -3,6 +3,13 @@ from config import base_url
 
 login_url = f"{base_url}/api/auth/login/"
 
+def build_headers(access_token=None):
+    headers = {}
+
+    if access_token is not None:
+        headers["Authorization"] = f"Bearer {access_token}"
+
+    return headers
 
 def login(username, password):
     login_data = {
@@ -17,31 +24,25 @@ def login(username, password):
 
     return response
     
-def get_equipment(access_token=None):
+def get_equipment(access_token=None, session=None):
     equipment_url = f"{base_url}/api/equipment/instances/"
 
-    headers = {}
-
-    if access_token is not None:
-        headers["Authorization"] = f"Bearer {access_token}"
-
-    response = requests.get(
-        equipment_url,
-        headers=headers
-    )
+    if session is not None:
+        response = session.get(equipment_url)
+    else:
+        response = requests.get(
+            equipment_url,
+            headers=build_headers(access_token)
+        )
 
     return response
 
 def get_equipment_types(access_token):
     equipment_url = f"{base_url}/api/equipment/types/"
 
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
     response = requests.get(
         equipment_url,
-        headers=headers
+        headers=build_headers(access_token)
     )
 
     return response
@@ -49,13 +50,9 @@ def get_equipment_types(access_token):
 def create_equipment(access_token, equipment_data):
     url = f"{base_url}/api/equipment/instances/"
 
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
     response = requests.post(
         url,
-        headers=headers,
+        headers=build_headers(access_token),
         json=equipment_data
     )
 
@@ -65,13 +62,9 @@ def create_equipment(access_token, equipment_data):
 def delete_equipment(access_token, equipment_id):
     url = f"{base_url}/api/equipment/instances/{equipment_id}/"
 
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
     response = requests.delete(
         url,
-        headers=headers
+        headers=build_headers(access_token)
     )
 
     return response

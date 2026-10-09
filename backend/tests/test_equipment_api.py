@@ -256,3 +256,10 @@ def test_create_duplicate_equipment(
                 equipment_id
             )
             assert delete_response.status_code == 204
+
+def test_get_equipment_with_session(authenticated_session):
+    assert "Authorization" in authenticated_session.headers
+
+    response = get_equipment(session=authenticated_session)
+
+    assert response.status_code == 200

@@ -1,7 +1,9 @@
 import os
 import pytest
 from api_client import login, get_equipment_types
+import requests
 import logging
+
 
 
 logger = logging.getLogger(__name__)
@@ -24,6 +26,16 @@ def access_token():
     token = login_response.json()["tokens"]["access"]
 
     return token
+
+@pytest.fixture
+def authenticated_session(access_token):
+    with requests.Session() as session:
+        session.headers.update({
+            "Authorization": f"Bearer {access_token}"
+        })
+
+        yield session
+
 
 @pytest.fixture(scope="session")
 def equipment_type_id(access_token):
