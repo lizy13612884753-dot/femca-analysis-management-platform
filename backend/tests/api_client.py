@@ -69,3 +69,11 @@ def delete_equipment(access_token, equipment_id):
 
     return response
     
+
+def get_equipment_by_id(access_token, equipment_id):
+    url = f"{base_url}/api/equipment/instances/{equipment_id}/"
+
+    return requests.get(
+        url,
+        headers=build_headers(access_token)
+    )

@@ -1,6 +1,11 @@
 import os
 import pytest
-from api_client import login, get_equipment_types
+from api_client import (
+    login,
+    get_equipment_types,
+    delete_equipment,
+    get_equipment_by_id
+)
 import requests
 import logging
 
@@ -61,3 +66,23 @@ def pytest_runtest_makereport(item, call):
             item.nodeid,
             report.longreprtext
         )
+
+
+@pytest.fixture
+def equipment_cleanup(access_token):
+    created_ids = []
+
+    yield created_ids
+
+    for equipment_id in created_ids:
+        delete_response = delete_equipment(
+            access_token,
+            equipment_id
+        )
+        assert delete_response.status_code == 204
+
+        get_response = get_equipment_by_id(
+            access_token,
+            equipment_id
+        )
+        assert get_response.status_code == 404

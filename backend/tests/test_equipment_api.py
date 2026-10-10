@@ -71,7 +71,8 @@ def test_equipment_name_boundary(
     name_length,
     expected_status,
     access_token,
-    equipment_type_id
+    equipment_type_id,
+    equipment_cleanup
 ):
     equipment_data = {
         "equipment_type": equipment_type_id,
@@ -79,70 +80,50 @@ def test_equipment_name_boundary(
         "name": "A" * name_length
     }
 
-    equipment_id = None
+    response = create_equipment(access_token, equipment_data)
 
-    try:
-        response = create_equipment(access_token, equipment_data)
+    # 创建成功时，先记录 ID，确保测试结束后自动清理
+    if response.status_code == 201:
+        equipment_cleanup.append(response.json()["id"])
 
-        # ① 如果真的创建成功，先保存 ID，保证之后可以 cleanup
-        if response.status_code == 201:
-            equipment_id = response.json()["id"]
+    assert response.status_code == expected_status
 
-        # ② 再检查最核心的 Status Code
-        assert response.status_code == expected_status
+    response_data = response.json()
 
-        # ③ Status 正确后，再做对应的 Response Body Validation
-        response_data = response.json()
+    if response.status_code == 201:
+        assert response_data["name"] == equipment_data["name"]
+        assert response_data["serial_number"] == equipment_data["serial_number"]
 
-        if response.status_code == 201:
-            assert response_data["name"] == equipment_data["name"]
-            assert response_data["serial_number"] == equipment_data["serial_number"]
+    if response.status_code == 400:
+        assert "name" in response_data
 
-        if response.status_code == 400:
-            assert "name" in response_data
-
-    finally:
-        if equipment_id is not None:
-            delete_response = delete_equipment(
-                access_token,
-                equipment_id
-            )
-            assert delete_response.status_code == 204
 
 def test_create_equipment_missing_name(
     access_token,
-    equipment_type_id
+    equipment_type_id,
+    equipment_cleanup
 ):
     equipment_data = {
         "equipment_type": equipment_type_id,
         "serial_number": f"TEST-{uuid.uuid4().hex[:8]}"
     }
 
-    equipment_id = None
+    response = create_equipment(access_token, equipment_data)
 
-    try:
-        response = create_equipment(access_token, equipment_data)
+    # 如果 API 意外创建成功，先记录 ID，确保后续能清理
+    if response.status_code == 201:
+        equipment_cleanup.append(response.json()["id"])
 
-        if response.status_code == 201:
-            equipment_id = response.json()["id"]
+    assert response.status_code == 400
 
-        assert response.status_code == 400
-
-        response_data = response.json()
-        assert "name" in response_data
-
-    finally:
-        if equipment_id is not None:
-            delete_response = delete_equipment(
-                access_token,
-                equipment_id
-            )
-            assert delete_response.status_code == 204
+    response_data = response.json()
+    assert "name" in response_data
 
 
 def test_create_equipment_null_name(
     access_token,
-    equipment_type_id
+    equipment_type_id,
+    equipment_cleanup
 ):
     equipment_data = {
         "equipment_type": equipment_type_id,
@@ -150,30 +131,20 @@ def test_create_equipment_null_name(
         "name": None
     }
 
-    equipment_id = None
+    response = create_equipment(access_token, equipment_data)
 
-    try:
-        response = create_equipment(access_token, equipment_data)
+    if response.status_code == 201:
+        equipment_cleanup.append(response.json()["id"])
 
-        if response.status_code == 201:
-            equipment_id = response.json()["id"]
+    assert response.status_code == 400
 
-        assert response.status_code == 400
-
-        response_data = response.json()
-        assert "name" in response_data
-
-    finally:
-        if equipment_id is not None:
-            delete_response = delete_equipment(
-                access_token,
-                equipment_id
-            )
-            assert delete_response.status_code == 204
+    response_data = response.json()
+    assert "name" in response_data
 
         
 def test_create_equipment_invalid_equipment_type(
-    access_token
+    access_token,
+    equipment_cleanup
 ):
     equipment_data = {
         "equipment_type": 999999,
@@ -181,31 +152,22 @@ def test_create_equipment_invalid_equipment_type(
         "name": "123"
     }
 
-    equipment_id = None
+    response = create_equipment(access_token, equipment_data)
 
-    try:
-        response = create_equipment(access_token, equipment_data)
+    # 如果意外创建成功，记录 ID 以便自动清理
+    if response.status_code == 201:
+        equipment_cleanup.append(response.json()["id"])
 
-        if response.status_code == 201:
-            equipment_id = response.json()["id"]
+    assert response.status_code == 400
 
-        assert response.status_code == 400
-
-        response_data = response.json()
-        assert "equipment_type" in response_data
-
-    finally:
-        if equipment_id is not None:
-            delete_response = delete_equipment(
-                access_token,
-                equipment_id
-            )
-            assert delete_response.status_code == 204
+    response_data = response.json()
+    assert "equipment_type" in response_data
 
 
 def test_create_duplicate_equipment(
     access_token,
-    equipment_type_id
+    equipment_type_id,
+    equipment_cleanup
 ):
     serial_number = f"TEST-{uuid.uuid4().hex[:8]}"
 
@@ -215,47 +177,39 @@ def test_create_duplicate_equipment(
         "name": "Duplicate Test"
     }
 
-    equipment_id = None
+    # 第一次创建：预期成功
+    response = create_equipment(
+        access_token,
+        equipment_data
+    )
 
-    try:
-        response = create_equipment(
+    # 先记录 ID，确保后续断言失败时也能 Cleanup
+    if response.status_code == 201:
+        equipment_id = response.json()["id"]
+        equipment_cleanup.append(equipment_id)
+
+    assert response.status_code == 201
+
+    # 第二次创建：相同 equipment_type + serial_number
+    with allure.step("Verify duplicate equipment is rejected"):
+        duplicate_response = create_equipment(
             access_token,
             equipment_data
         )
 
-        if response.status_code == 201:
-            equipment_id = response.json()["id"]
+        duplicate_data = duplicate_response.json()
 
-        assert response.status_code == 201
+        allure.attach(
+            str(duplicate_data),
+            name="Duplicate Response Body",
+            attachment_type=allure.attachment_type.TEXT
+        )
 
-        with allure.step("Verify duplicate equipment is rejected"):
-            duplicate_response = create_equipment(
-                access_token,
-                equipment_data
-            )
+        assert duplicate_response.status_code == 400
+        assert "non_field_errors" in duplicate_data
 
-            duplicate_data = duplicate_response.json()
-            allure.attach(
-                str(duplicate_data),
-                name="Duplicate Response Body",
-                attachment_type=allure.attachment_type.TEXT
-            )
+    logger.info("Duplicate equipment correctly rejected")
 
-            assert duplicate_response.status_code == 400
-            assert "non_field_errors" in duplicate_data
-
-        if duplicate_response.status_code == 400:
-            logger.info("Duplicate correctly rejected")
-        else:
-            logger.error("Unexpected duplicate response")
-
-    finally:
-        if equipment_id is not None:
-            delete_response = delete_equipment(
-                access_token,
-                equipment_id
-            )
-            assert delete_response.status_code == 204
 
 def test_get_equipment_with_session(authenticated_session):
     assert "Authorization" in authenticated_session.headers
@@ -263,3 +217,25 @@ def test_get_equipment_with_session(authenticated_session):
     response = get_equipment(session=authenticated_session)
 
     assert response.status_code == 200
+
+
+def test_equipment_cleanup_fixture(
+    equipment_cleanup,
+    access_token,
+    equipment_type_id
+):
+
+    equipment_data = {
+        "equipment_type": equipment_type_id,
+        "serial_number": f"CLEANUP-{uuid.uuid4().hex[:8]}",
+        "name": "Cleanup Fixture Test"
+    }
+
+    response = create_equipment(access_token, equipment_data)
+
+    if response.status_code == 201:
+        equipment_id = response.json()["id"]
+        equipment_cleanup.append(equipment_id)
+
+    assert response.status_code == 201
+    assert len(equipment_cleanup) == 1
