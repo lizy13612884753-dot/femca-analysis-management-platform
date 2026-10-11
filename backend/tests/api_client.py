@@ -24,15 +24,19 @@ def login(username, password):
 
     return response
     
-def get_equipment(access_token=None, session=None):
+def get_equipment(access_token=None, session=None, params=None):
     equipment_url = f"{base_url}/api/equipment/instances/"
 
     if session is not None:
-        response = session.get(equipment_url)
+        response = session.get(
+            equipment_url,
+            params=params
+        )
     else:
         response = requests.get(
             equipment_url,
-            headers=build_headers(access_token)
+            headers=build_headers(access_token),
+            params=params
         )
 
     return response

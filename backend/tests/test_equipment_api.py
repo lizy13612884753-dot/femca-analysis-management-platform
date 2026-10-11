@@ -13,9 +13,35 @@ logger = logging.getLogger(__name__)
 def test_equipment(access_token):
     equipment_response = get_equipment(access_token)
 
+    assert equipment_response.status_code == 200
+
     equipment_data = equipment_response.json()
 
-    assert equipment_response.status_code == 200
+    assert isinstance(equipment_data["count"], int)
+    assert isinstance(equipment_data["results"], list)
+    assert equipment_data["count"] >= len(equipment_data["results"]), (
+        "Total equipment count cannot be smaller than returned results"
+    )
+
+    assert len(equipment_data["results"]) > 0
+
+    for equipment in equipment_data["results"]:
+        # Step 7：先检查字段是否存在
+        assert "id" in equipment
+        assert "name" in equipment, (
+            f"Equipment ID {equipment.get('id', 'UNKNOWN')}: missing name field"
+        )
+        assert len(equipment["name"].strip()) > 0, (
+            f"Equipment ID {equipment['id']}: name cannot be blank"
+        )
+        assert "serial_number" in equipment
+
+        # 再检查字段类型
+        assert isinstance(equipment["id"], int)
+        assert isinstance(equipment["name"], str), (
+            f"Equipment ID {equipment['id']}: name must be a string"
+        )
+        assert isinstance(equipment["serial_number"], str)
 
     assert "count" in equipment_data
     assert isinstance(equipment_data["count"], int)
@@ -239,3 +265,61 @@ def test_equipment_cleanup_fixture(
 
     assert response.status_code == 201
     assert len(equipment_cleanup) == 1
+
+
+def test_equipment_pagination(access_token):
+    import requests
+    from config import base_url
+
+    url = f"{base_url}/api/equipment/instances/"
+
+    response = get_equipment(
+        access_token,
+        params={"page": 1, "page_size": 5}
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["count"] >= len(data["results"])
+    assert len(data["results"]) <= 5
+
+    print("\nRequest URL:", response.url)
+    print("Total count:", data.get("count"))
+    print("Results length:", len(data.get("results", [])))
+    print("Next page:", data.get("next"))
+    print("Previous page:", data.get("previous"))
+
+
+def test_equipment_invalid_page(access_token):
+    # Step 1: 获取设备总数
+    first_response = get_equipment(access_token)
+    assert first_response.status_code == 200
+
+    count = first_response.json()["count"]
+
+    # Step 2: 计算一个超出范围的页码
+    page_size = 20
+    invalid_page = count // page_size + 2
+
+    # Step 3: 请求超出范围的页码
+    response = get_equipment(
+        access_token,
+        params={
+            "page": invalid_page,
+            "page_size": page_size
+        }
+    )
+
+    print("\nTotal count:", count)
+    print("Invalid page:", invalid_page)
+    print("Status Code:", response.status_code)
+    print("Response Body:", response.text)
+
+    # Step 4: 验证当前接口行为
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["results"] == []
+    assert data["next"] is None
