@@ -323,3 +323,73 @@ def test_equipment_invalid_page(access_token):
     data = response.json()
     assert data["results"] == []
     assert data["next"] is None
+
+
+def test_missing_token_response():
+    import requests
+    from config import base_url
+
+    url = f"{base_url}/api/equipment/instances/"
+
+    response = requests.get(url)
+
+
+    assert response.status_code == 401
+
+    data = response.json()
+
+    assert "detail" in data
+    assert data["detail"] == "身份认证信息未提供。"
+
+
+def test_invalid_token_response():
+    import requests
+    from config import base_url
+
+    url = f"{base_url}/api/equipment/instances/"
+
+    headers = {
+        "Authorization": "Bearer invalid_token_123"
+    }
+
+    response = requests.get(
+        url,
+        headers=headers
+    )
+
+
+
+    assert response.status_code == 401
+
+    data = response.json()
+
+    assert data["code"] == "token_not_valid"
+    assert data["messages"][0]["message"] == "令牌无效或已过期"
+
+
+
+def test_expired_token_response():
+    from datetime import timedelta
+    import requests
+    from rest_framework_simplejwt.tokens import AccessToken
+    from config import base_url
+
+    # Arrange: 准备过期 Token
+    token = AccessToken()
+    token.set_exp(lifetime=timedelta(seconds=-60))
+
+    headers = {
+        "Authorization": f"Bearer {str(token)}"
+    }
+
+    # Act: 发送请求
+    response = requests.get(
+        f"{base_url}/api/equipment/instances/",
+        headers=headers
+    )
+
+    # Assert: 验证结果
+    assert response.status_code == 401
+
+    data = response.json()
+    assert data["code"] == "token_not_valid"

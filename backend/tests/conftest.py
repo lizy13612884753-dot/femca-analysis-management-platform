@@ -1,4 +1,6 @@
 import os
+import sys
+from pathlib import Path
 import pytest
 from api_client import (
     login,
@@ -9,7 +11,19 @@ from api_client import (
 import requests
 import logging
 
+def pytest_configure(config):
+    backend_dir = Path(__file__).resolve().parent.parent
 
+    if str(backend_dir) not in sys.path:
+        sys.path.insert(0, str(backend_dir))
+
+    os.environ.setdefault(
+        "DJANGO_SETTINGS_MODULE",
+        "femca_platform.settings"
+    )
+
+    import django
+    django.setup()
 
 logger = logging.getLogger(__name__)
 
