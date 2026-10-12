@@ -1,7 +1,9 @@
 import requests
-from config import base_url
+from config import base_url, DEFAULT_TIMEOUT
 
 login_url = f"{base_url}/api/auth/login/"
+
+equipment_url = f"{base_url}/api/equipment/instances/"
 
 def build_headers(access_token=None):
     headers = {}
@@ -19,65 +21,71 @@ def login(username, password):
 
     response = requests.post(
         url=login_url,
-        json=login_data
+        json=login_data,
+        timeout=DEFAULT_TIMEOUT
     )
 
     return response
     
 def get_equipment(access_token=None, session=None, params=None):
-    equipment_url = f"{base_url}/api/equipment/instances/"
 
     if session is not None:
         response = session.get(
             equipment_url,
-            params=params
+            params=params,
+            timeout=DEFAULT_TIMEOUT
         )
     else:
         response = requests.get(
             equipment_url,
             headers=build_headers(access_token),
-            params=params
+            params=params,
+            timeout=DEFAULT_TIMEOUT
         )
 
     return response
 
 def get_equipment_types(access_token):
-    equipment_url = f"{base_url}/api/equipment/types/"
+    equipment_types_url = f"{base_url}/api/equipment/types/"
 
     response = requests.get(
-        equipment_url,
-        headers=build_headers(access_token)
+        equipment_types_url,
+        headers=build_headers(access_token),
+        timeout=DEFAULT_TIMEOUT
     )
 
     return response
 
 def create_equipment(access_token, equipment_data):
-    url = f"{base_url}/api/equipment/instances/"
+    url = equipment_url
 
     response = requests.post(
         url,
         headers=build_headers(access_token),
-        json=equipment_data
+        json=equipment_data,
+        timeout=DEFAULT_TIMEOUT
     )
 
     return response
     
 
 def delete_equipment(access_token, equipment_id):
-    url = f"{base_url}/api/equipment/instances/{equipment_id}/"
+    url = f"{equipment_url}{equipment_id}/"
 
     response = requests.delete(
         url,
-        headers=build_headers(access_token)
+        headers=build_headers(access_token),
+        timeout=DEFAULT_TIMEOUT
     )
 
     return response
     
 
 def get_equipment_by_id(access_token, equipment_id):
-    url = f"{base_url}/api/equipment/instances/{equipment_id}/"
+    url = f"{equipment_url}{equipment_id}/"
 
     return requests.get(
         url,
-        headers=build_headers(access_token)
+        headers=build_headers(access_token),
+        timeout=DEFAULT_TIMEOUT
     )
