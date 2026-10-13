@@ -1,7 +1,9 @@
 import pytest
 from login_test_data import login_test_data
 from api_client import login
+pytestmark = pytest.mark.regression
 
+@pytest.mark.smoke
 @pytest.mark.parametrize(
     "username,password,expected_status,expected_message",
     login_test_data

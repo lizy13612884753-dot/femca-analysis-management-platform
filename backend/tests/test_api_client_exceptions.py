@@ -4,6 +4,8 @@ from unittest.mock import patch
 
 from api_client import get_equipment
 
+pytestmark = pytest.mark.regression
+
 
 def test_get_equipment_timeout(caplog):
 

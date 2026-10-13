@@ -2,6 +2,8 @@ import uuid
 
 import pytest
 
+pytestmark = pytest.mark.regression
+
 from api_client import get_equipment, create_equipment, delete_equipment
 
 import allure
@@ -10,6 +12,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+@pytest.mark.smoke
 def test_equipment(access_token):
     equipment_response = get_equipment(access_token)
 
