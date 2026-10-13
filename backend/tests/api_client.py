@@ -1,5 +1,9 @@
+import logging
 import requests
+
 from config import base_url, DEFAULT_TIMEOUT
+
+logger = logging.getLogger(__name__)
 
 login_url = f"{base_url}/api/auth/login/"
 
@@ -29,19 +33,38 @@ def login(username, password):
     
 def get_equipment(access_token=None, session=None, params=None):
 
-    if session is not None:
-        response = session.get(
-            equipment_url,
-            params=params,
-            timeout=DEFAULT_TIMEOUT
-        )
-    else:
-        response = requests.get(
-            equipment_url,
-            headers=build_headers(access_token),
-            params=params,
-            timeout=DEFAULT_TIMEOUT
-        )
+    logger.info(
+        "Sending GET request to %s",
+        equipment_url
+    )
+
+    try:
+        if session is not None:
+            response = session.get(
+                equipment_url,
+                params=params,
+                timeout=DEFAULT_TIMEOUT
+            )
+        else:
+            response = requests.get(
+                equipment_url,
+                headers=build_headers(access_token),
+                params=params,
+                timeout=DEFAULT_TIMEOUT
+            )
+
+    except requests.exceptions.Timeout:
+        logger.error("Equipment API request timed out")
+        raise
+
+    except requests.exceptions.ConnectionError:
+        logger.error("Equipment API connection failed")
+        raise
+
+    logger.info(
+        "Equipment API returned status code: %s",
+        response.status_code
+    )
 
     return response
 
