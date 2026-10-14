@@ -8,15 +8,46 @@ from api_client import get_equipment, create_equipment, delete_equipment
 
 import allure
 
+import json
+
 import logging
 
 logger = logging.getLogger(__name__)
 
 @pytest.mark.smoke
+@allure.severity(allure.severity_level.CRITICAL)
+@allure.title("Verify equipment list API returns valid response")
+@allure.description(
+    "Send an authenticated GET request to the equipment list API "
+    "and verify the response status and expected data structure."
+)
 def test_equipment(access_token):
-    equipment_response = get_equipment(access_token)
 
-    assert equipment_response.status_code == 200
+    with allure.step("Step 1: Send GET equipment request"):
+        equipment_response = get_equipment(access_token)
+
+        allure.attach(
+            f"HTTP {equipment_response.status_code}",
+            name="Response Status",
+            attachment_type=allure.attachment_type.TEXT
+        )
+
+    with allure.step("Step 2: Verify equipment response"):
+        assert equipment_response.status_code == 200
+
+        response_data = equipment_response.json()
+
+        safe_response = {
+            "count": response_data.get("count"),
+            "returned_items": len(response_data.get("results", []))
+        }
+
+        allure.attach(
+            json.dumps(safe_response, indent=4),
+            name="Equipment Response Summary",
+            attachment_type=allure.attachment_type.JSON
+        )
+
 
     equipment_data = equipment_response.json()
 
