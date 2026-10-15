@@ -21,7 +21,7 @@ The project includes an implemented API automation suite using **Python + Pytest
 
 ### Implemented Test Coverage
 
-The current suite contains **13 automated test cases**.
+The current regression suite contains **22 collected test cases**, including parameterized scenarios.
 
 | Module | Test Scenarios |
 |---|---|
@@ -57,7 +57,9 @@ backend/
 │   ├── api_client.py
 │   ├── login_test_data.py
 │   ├── test_login_api.py
-│   └── test_equipment_api.py
+│   ├── test_equipment_api.py
+│   └── test_api_client_exceptions.py
+├── pytest.ini
 └── requirements.txt
 ```
 
@@ -110,6 +112,31 @@ From the project root directory, with the backend virtual environment activated:
 pytest backend/tests/ -v
 ```
 
+### Smoke and Regression Tests
+
+The API automation framework uses Pytest markers to organize test execution.
+
+**Smoke Tests** — Run critical API tests to quickly verify core functionality:
+
+```bash
+pytest backend/tests/ -m smoke -v
+```
+
+**Regression Tests** — Run the full regression test suite:
+
+```bash
+pytest backend/tests/ -m regression -v
+```
+
+The latest verified execution results were:
+
+| Test Suite | Result |
+|---|---|
+| Smoke Tests | 4 Passed |
+| Regression Tests | 22 Passed |
+
+These results reflect the implemented API test cases and do not represent complete coverage of the FEMCA platform.
+
 ## Allure Test Reporting
 
 Generate test results:
@@ -138,7 +165,7 @@ The report supports:
 
 ## Latest Regression Test Result
 
-**13 Passed / 13 Executed**
+**22 Passed / 22 Executed (Day 13 Regression Run)**
 
 The latest local regression test completed successfully.
 
