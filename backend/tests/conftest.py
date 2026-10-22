@@ -10,6 +10,8 @@ from api_client import (
 )
 import requests
 import logging
+from playwright.sync_api import Page, expect
+from tests.pages.login_page import LoginPage
 
 def pytest_configure(config):
     backend_dir = Path(__file__).resolve().parent.parent
@@ -100,3 +102,28 @@ def equipment_cleanup(access_token):
             equipment_id
         )
         assert get_response.status_code == 404
+
+
+
+#UI测试#
+
+
+
+@pytest.fixture
+def logged_in_page(page: Page):
+    login_page = LoginPage(page)
+
+    username = os.getenv("FEMCA_TEST_USERNAME")
+    password = os.getenv("FEMCA_TEST_PASSWORD")
+
+    assert username and password, "Missing FEMCA test credentials"
+
+    login_page.open()
+    login_page.login(username, password)
+
+    expect(page).to_have_url(
+        "http://localhost:8000/dashboard",
+        timeout=10000
+    )
+
+    return page

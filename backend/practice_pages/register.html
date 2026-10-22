@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Practice</title>
+</head>
+<body>
+    <h1>Register Account</h1>
+
+    <form onsubmit="event.preventDefault(); document.getElementById('success-message').hidden = false;">
+        <label for="username">Username</label>
+        <input id="username" type="text" required>
+
+        <label for="email">Email</label>
+        <input id="email" type="email" required>
+
+        <button type="submit">Register</button>
+    </form>
+    <p id="success-message" hidden>Registration successful!</p>
+</body>
+</html>
