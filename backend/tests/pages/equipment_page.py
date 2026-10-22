@@ -12,3 +12,7 @@ class EquipmentPage:
         search_input = self.page.get_by_placeholder("搜索设备实例...")
         search_input.fill(keyword)
         search_input.press("Enter")
+
+    def get_equipment_rows(self):
+        equipment_rows = self.page.locator(".el-table__body tbody tr")
+        return equipment_rows

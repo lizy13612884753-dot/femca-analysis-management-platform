@@ -53,3 +53,6 @@ __pycache__/
 # Allure generated results
 allure-results/
 allure-report/
+
+# Playwright test artifacts
+test-results/
