@@ -87,21 +87,23 @@ def pytest_runtest_makereport(item, call):
 @pytest.fixture
 def equipment_cleanup(access_token):
     created_ids = []
-
     yield created_ids
 
-    for equipment_id in created_ids:
-        delete_response = delete_equipment(
-            access_token,
-            equipment_id
-        )
-        assert delete_response.status_code == 204
+    errors = []
 
-        get_response = get_equipment_by_id(
-            access_token,
-            equipment_id
-        )
-        assert get_response.status_code == 404
+    for equipment_id in created_ids:
+        try:
+            delete_response = delete_equipment(access_token, equipment_id)
+            assert delete_response.status_code == 204
+
+            get_response = get_equipment_by_id(access_token, equipment_id)
+            assert get_response.status_code == 404
+
+        except Exception as e:
+            errors.append(f"Equipment {equipment_id}: {e}")
+
+    if errors:
+        pytest.fail("; ".join(errors))
 
 
 
