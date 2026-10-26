@@ -62,7 +62,7 @@ jobs:
 
       - name: Run Pytest
         working-directory: backend
-        run: python -m pytest tests/test_api_client_exceptions.py tests/test_fixture_practice.py tests/test_api_client_headers.py tests/test_ci_login_api.py -v --junitxml=pytest-report.xml
+        run: python -m pytest tests/test_api_client_exceptions.py tests/test_fixture_practice.py tests/test_api_client_headers.py tests/test_ci_login_api.py tests/test_ci_equipment_api.py -v --junitxml=pytest-report.xml
 
       - name: Upload Pytest Report
         if: always()
