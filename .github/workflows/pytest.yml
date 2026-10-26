@@ -26,6 +26,18 @@ jobs:
         working-directory: backend
         run: python manage.py migrate --noinput
 
+      - name: Generate CI Credentials
+        run: |
+          echo "CI_TEST_USERNAME=ci_test_user" >> "$GITHUB_ENV"
+          echo "CI_TEST_EMAIL=ci_test_user@example.com" >> "$GITHUB_ENV"
+          password=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')
+          echo "::add-mask::$password"
+          echo "CI_TEST_PASSWORD=$password" >> "$GITHUB_ENV"
+
+      - name: Create CI User
+        working-directory: backend
+        run: python create_ci_user.py
+
       - name: Run Pytest
         working-directory: backend
         run: python -m pytest tests/test_api_client_exceptions.py tests/test_fixture_practice.py tests/test_api_client_headers.py -v --junitxml=pytest-report.xml
