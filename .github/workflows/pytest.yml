@@ -42,6 +42,10 @@ jobs:
         working-directory: backend
         run: python create_ci_user.py
 
+      - name: Create CI Equipment
+        working-directory: backend
+        run: python create_ci_equipment.py
+
       - name: Start Django Server
         working-directory: backend
         run: |
