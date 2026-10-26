@@ -56,3 +56,6 @@ allure-report/
 
 # Playwright test artifacts
 test-results/
+
+# Pytest JUnit XML report
+/backend/pytest-report.xml
