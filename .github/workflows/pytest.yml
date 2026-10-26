@@ -38,6 +38,24 @@ jobs:
         working-directory: backend
         run: python create_ci_user.py
 
+      - name: Start Django Server
+        working-directory: backend
+        run: |
+          python manage.py runserver 127.0.0.1:8000 --noreload > django-server.log 2>&1 &
+          for i in {1..10}; do
+            echo "Checking Django server: attempt $i"
+            if curl -s -o /dev/null --max-time 2 http://127.0.0.1:8000/; then
+              echo "Django server is ready"
+              break
+            fi
+            if [ "$i" -eq 10 ]; then
+              echo "Django server failed to start"
+              cat django-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+
       - name: Run Pytest
         working-directory: backend
         run: python -m pytest tests/test_api_client_exceptions.py tests/test_fixture_practice.py tests/test_api_client_headers.py -v --junitxml=pytest-report.xml
